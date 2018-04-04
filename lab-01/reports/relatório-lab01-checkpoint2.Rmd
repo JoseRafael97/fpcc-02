@@ -1,0 +1,99 @@
+---
+title: "Lab 1 - Checkpoint 2 - Minhas perguntas"
+output:
+  html_document:
+  df_print: paged
+  pdf_document: default
+---
+
+
+```{r setup}
+library(tidyverse)
+library(here)
+library(knitr)
+theme_set(theme_bw())
+```
+
+```{r}
+projetos = read_csv(here::here("data/projetos.csv")) %>%
+    filter(lang != 'javascript')
+```
+
+---
+### 1. Definição das variáveis
+
+Com o objetivo de responder às seguintes perguntas; a) Como são os tamanhos de time nos projetos que usam travis em Java e em Ruby nos nossos dados?; b) Ao comparar projetos em Java e em Ruby que tenham ao menos 10 contribuidores no time nos nossos dados, projetos de qual linguagem variam mais na proporção de builds cujo resultado é sucesso? Foram selecionadas as seguintes variáveis do dataset (projetos.csv) disponibilizado:
+
+```
+lang = linguagem de programação
+team = tamanho do time de desenvolvedores
+build_success_prop = proporção de sucesso dos build
+
+```
+
+Nesse contexto, a fim de analisar a variável lang, a figura abaixo expõe a proporção de projetos Java e Ruby contidos no dataset. Para esta análise foram desconsiderados dados de projetos desenvolvidos em outra linguagem devido ao objetivo do relatório serem direcionados para essas duas linguagens de programação.
+
+
+```{r}
+projetos %>% 
+    group_by(lang) %>% 
+    summarise(number_of_projects = n()) %>% 
+    ggplot(aes(x = lang, y = number_of_projects)) + 
+    geom_col()
+```
+    
+
+De acordo com a figura existem nos dados mais de 750 projetos com a linguagem de programação Ruby e aproximadamente 375 projetos Java. Esta variável é de centro, pois representa uma contagem de projetos. Além disso, ela é uma variável simétrica, estando concentrada entre 1 e aproximadamente 750.
+
+No que se refere a variável team (time), a figura abaixo mostra a relação entre o número de projetos e a proporção do número de integrantes dos times desses projetos.
+
+
+```{r}
+projetos %>% 
+    ggplot(aes(x = team)) + 
+    geom_histogram(binwidth = 20, fill = "white", color = "green") +
+    geom_rug(alpha = .2) 
+```
+
+Com base na Figura acima, é possível identificar a existência de uma alta concentração de projetos com times entre 1 a 50 integrantes, estando nessa faixa de valores a maior quantidade de projetos contidos nos dados. Além disso, é notável que os dados da variável team não são simetricamente distribuídos.
+
+Considerando valores extremos, é apresentado nos dados apenas uma projeto que possui em sua composição um time com mais de 200 integrantes. Este projeto trata-se de um popular framework web para a linguagem de programação Ruby denominado Rails. Esta popularidade do framework pode ser o motivo da presença de grande número de contribuintes no projeto.
+
+Na figura abaixo é exibida a proporção de projetos em relação aos seus builds sucesso.
+    
+```{r}
+projetos %>% 
+    ggplot(aes(y = build_success_prop , x ='projects')) + 
+    geom_jitter(alpha = .4, width = .2, size = .8) 
+
+```
+
+Com base na figura acima, fica evidente a grande dispersão da proporção de builds sucessos nos projetos. Nesse contexto, existem projetos com taxa de builds sucesso perto do limite inferior (0) e também projetos que passaram a maior parte do tempo com a build com status de sucesso, estando dispostos próximo ao limite superior (1). No entanto, existe uma concetração maior de projetos entre as faixas de valores entre 0.75 e 1. Assim, é possível verificar que dados não são totalmente simétricos.
+
+### 2. Tamanho dos times e linguagens utilizadas
+
+Na figura abaixo, é apresentado a proporção dos projetos e o tamanho de seus times.
+
+```{r}
+projetos %>% 
+    ggplot(aes(x = lang, y = team)) + 
+    geom_jitter(alpha = .4, width = .2, size = .8)
+```
+
+
+Com base na análise da figura exibida acima, é possível apontar que a proporção de projetos Ruby e maior em comparação aos de linguagem Java. Além disso, considerando somente os projetos Java, podemos verificar que somente um projeto possui equipe superior a 50 colaboradores, o restante do projetos possuem entre 1 a 50 desenvolvedores. No mais, apesar de existirem projetos Ruby com equipes superiores a 50 pessoas, a maior concentração de projetos fica como nos projetos Java entre 1 a 50 membros.
+
+
+### 3. Proporção de sucesso nos builds relacionando com a Linguagem do projeto
+
+Considerando os projetos com times superiores a 9 integrantes a figura abaixo apresenta a proporção dos projetos em relação a sua linguagem e sua proporção de builds com sucesso.
+
+```{r}
+projetos %>% 
+    filter(team > 9) %>%
+    ggplot(aes(x = lang, y = build_success_prop)) + 
+    geom_jitter(alpha = .4, width = .2, size = .8) 
+```
+
+De acordo com a figura acima, a linguagem que mais houve variação na proporção de builds com sucesso foi Ruby. Considerando todos os Projetos Ruby, é possível observar que em geral eles se mantiveram mais tempo com build sucesso do quê projetos Java. Isso pode se visto analisando os projetos com proporção de builds sucessos entre 0 e 0.25, é notável nessa faixa de valores um maior número projetos Java, enquanto somente um projeto Ruby pode ser identificado. 
+
