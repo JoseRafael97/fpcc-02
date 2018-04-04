@@ -1,0 +1,44 @@
+
+---
+title: "Relatório Final Laboratório 01"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup}
+library(tidyverse)
+library(here)
+library(knitr)
+theme_set(theme_bw())
+```
+
+```{r read}
+projetos = read_csv(here::here("data/projetos.csv"))
+```
+
+```{r clean}
+projetos = projetos %>% 
+    filter(lang != "javascript")
+```
+
+```{r}
+projetos %>% 
+    ggplot(aes(x = build_success_prop, 
+               y = commits_per_month)) + 
+      facet_grid(lang ~ .) +
+    geom_point(alpha = .3) + 
+  scale_y_log10()
+```
+
+
+
+```{r}
+projetos %>% 
+    ggplot(aes(x = build_success_prop, 
+               y = tests_per_kloc)) + 
+      facet_grid(lang ~ .) +
+    geom_point(alpha = .3) +
+    scale_y_log10()
+
+```
