@@ -6,14 +6,14 @@ output:
     df_print: paged
 ---
 
-```{r setup}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
 library(here)
 library(knitr)
 theme_set(theme_bw())
 ```
 
-```{r read}
+```{r read, message=FALSE, warning=FALSE, paged.print=FALSE}
 projetos = read_csv(here::here("data/projetos.csv"))
 ```
 
@@ -22,23 +22,69 @@ projetos = projetos %>%
     filter(lang != "javascript")
 ```
 
+
+### 1. Frequencia de atividade dos projetos e proporção de tempo com build com status sucesso
+
+Considerando projetos mais ativos como os repositórios com maior frequência de commits mensais, é possível por meio dos dados disponibilizados pelo Travis, estabelecer quais os projetos possuem maior atividade mensal com informações de commits, presente nos dados. Além disso, é verificado também através dos dados a proporção de tempo que cada projeto passou com status de build sucesso.
+
+Desta forma, A Figura abaixo exibe a relação entre a frequencia de modificação dos projetos com seu tempo de permanência no estado de build sucesso. 
+
 ```{r}
+
+
+
 projetos %>% 
-    ggplot(aes(x = build_success_prop, 
-               y = commits_per_month)) + 
-      facet_grid(lang ~ .) +
-    geom_point(alpha = .3) + 
-  scale_y_log10()
+    ggplot(aes(x = build_success_prop, y = commits_per_month)) +
+    geom_point(alpha = 0.3, color="skyblue", size = 4) + scale_y_log10()
+
 ```
 
+De acordo com a Figura, é verificado que alguns projetos com mais de 1000 commits mensais como por exemplo o repositório rails/rails ficaram uma menor parte do tempo com sua build no status sucesso em comparação com outros  projetos com uma menor frequência de modificação, como é caso do projeto mpatric/mp3agic que tem um média mensal de modificação de 0.41 e proporção de builds com status sucesso de 0.9. Assim, com base na Figura não é possível identificar uma correção entre a frequência de atividade mensal e tempo médio com status de build em sucesso nos projetos, devido a varição entre as variáveis. 
+
+Ainda nesse contexto, com o objetivo de verificar se existia diferanças entre projetos Java e Ruby, a Figura abaixo foi produzida.
 
 
 ```{r}
 projetos %>% 
-    ggplot(aes(x = build_success_prop, 
-               y = tests_per_kloc)) + 
-      facet_grid(lang ~ .) +
-    geom_point(alpha = .3) +
+    ggplot(aes(x = build_success_prop, y = commits_per_month)) +
+    geom_point(alpha = 0.2,  size = 3, color = 'skyblue') +
+    facet_grid(lang ~ .) +
     scale_y_log10()
+```
+
+De forma muito semelhante com a Figura anterior, a Figura apresentada com a divisão dos dados pela linguagem pouco se alterou no que se refere a divisão dos dados. Deste modo, fica evidentente que não existe nenhum impacto da linguagem de programação utilizada no projeto na existência de um correlação entre frequência de modificação e proporção de builds com status de sucesso.
+
+Por fim, para confirmar a não existência de um correlação, tal medida foi calculada resultando em ρ = -0.03547495 o que valida a análisa apresentada.	 
+
+
+### 2. Quantidade de teste e tamanho do projeto
+
+Assumindo a proporção de teste criados pelos desenvolvedores do projeto como a quantidade de testes para cada mil linhas de código e considerando também o tamanho do projeto como o número de linhas do repositório, é possível verificar se existe alguma relação entre o tamanho do projeto e quantidade de testes produzidos. Assim, a fim de verificar esta relação, a Figura abaixo foi criada.  
+
+
+
+```{r warning=FALSE}
+projetos %>% 
+  summarise(pearson = cor(sloc_end, tests_per_kloc, method = "pearson"), 
+            spearman = cor(sloc_end, tests_per_kloc, method = "spearman"),
+            kendall = cor(sloc_end, tests_per_kloc, method = "kendall"))
+
+projetos %>% 
+    ggplot(aes(x = sloc_end , y =  tests_per_kloc)) + 
+    geom_point(alpha = 0.2,  size = 3, color = 'skyblue') +     scale_y_log10()+ scale_x_log10()
+
+```
+
+Com base na Figura, é possível observar uma grande dispersão dos dados, encontrando projetos grandes com pequenas quantidades de testes. No entanto, é possível identificar também alguns projetos mais concentrados e até mesmo uma possível relação que aponta a existência de um decréscimo considerando projetos maiores e um menor o número de teste por mil linhas de código. Apesar disso, pela grande diferenciação dessa combinação, é possível concluir que não existe correlação no que diz respeito ao número de testes e tamanho do projeto.
+
+Do mesmo modo, objetivando investigar a existência de mundanças na relação entre número de testes e tamanho do projeto,foi optado também durante estudo pela separando dos dados, consirando a linguagem de programação utilizada em cada projeto projeto. Baseado nos resultados dessa separação, a Figura abaixo foi desenvolvida.
+
+
+```{r warning=FALSE}
+projetos %>% 
+    ggplot(aes(x = sloc_end , y = tests_per_kloc)) + 
+    geom_point(alpha = 0.2,  size = 3, color = 'skyblue') +
+    facet_grid(lang ~ .) +
+    scale_y_log10()+ scale_x_log10()
 
 ```
