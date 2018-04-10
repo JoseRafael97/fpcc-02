@@ -17,74 +17,89 @@ theme_set(theme_bw())
 projetos = read_csv(here::here("data/projetos.csv"))
 ```
 
-```{r clean}
+```{r clean, message=FALSE, warning=FALSE}
 projetos = projetos %>% 
     filter(lang != "javascript")
 ```
 
+### 1. Dataset
+Os dados utilizados na análise foram extraídos por meio Travis Torrent. Neles estão presentes informações sobre builds, commits, casos de testes e etc de diferentes projetos desenvolvidos sob as linguagens de programação Java ou Ruby hospedados no GitHub. Com base nos dados, foram investigadas as seguintes perguntas:
 
-### 1. Frequencia de atividade dos projetos e proporção de tempo com build com status sucesso
+1. Projetos com uma maior frequência de modificação passam mais tempo com sua builds com status de sucesso?
+2. Maiores projetos (linhas de código) tendem a possuir uma densidade de testes maior?
 
-Considerando projetos mais ativos como os repositórios com maior frequência de commits mensais, é possível por meio dos dados disponibilizados pelo Travis, estabelecer quais os projetos possuem maior atividade mensal com informações de commits, presente nos dados. Além disso, é verificado também através dos dados a proporção de tempo que cada projeto passou com status de build sucesso.
+Para esse estudo foram descartados alguns projetos da linguagem de programação Javascript existentes nos dados, devido a análise concentra-se na integração contínua de testes em projetos Java e Ruby. 
 
-Desta forma, A Figura abaixo exibe a relação entre a frequencia de modificação dos projetos com seu tempo de permanência no estado de build sucesso. 
+Para observar a relação entre o tempo de build sucesso e a frequência de modificação, foram utilizadas as seguintes variáveis:
 
-```{r}
+* ***build_success_prop:*** sumarizaçao do número total de builds com status sucesso divido pelo número total de builds em cada projeto;
+
+* ***commits_per_month:*** número de commits divido pelo número de meses de atividade do projeto, identificado pelo intervalo de tempo em meses do primeiro até último commit realizado no projeto. 
+
+No que ser refere a investigação da pergunta 2, foram utilizadas utilizada as seguintes variáveis variáveis:
+
+* ***sloc_end:*** maior tamanho do projeto considerando linhas de código encontrado nos dados;
+
+* ***tests_per_kloc:*** densidade máxima de testes encontrada nos dados considerando cada mil linhas de código do projeto.
+
+### 2. Frequência de atividade dos projetos e proporção de tempo com build com status sucesso
+
+Considerando projetos mais ativos como os repositórios com maior frequência de commits mensais, é possível por meio dos dados disponibilizados pelo Travis, estabelecer quais os projetos possuem maior atividade mensal. Além disso, é identifica através dos dados a proporção de tempo que cada projeto passou com status de build sucesso.
+
+Desta forma, A Figura 1 apresenta a relação entre a frequência de modificação dos projetos com seu tempo médio de permanência no estado de build sucesso. 
 
 
-
-projetos %>% 
+```{r }
+projetos %>%
     ggplot(aes(x = build_success_prop, y = commits_per_month)) +
-    geom_point(alpha = 0.3, color="skyblue", size = 4) + scale_y_log10()
-
+    geom_point(alpha = 0.3, size = 3, color="dodgerblue4") +
+    geom_smooth(method=lm, se=FALSE, color="red3") +    
+    scale_y_log10() +
+    labs(y= "frequência de modificação", x="proporção de tempo com builds com status sucesso", title="Figura 1 - Relação entre tempo médio com build sucesso e commits mensais nos projetos")
 ```
 
-De acordo com a Figura, é verificado que alguns projetos com mais de 1000 commits mensais como por exemplo o repositório rails/rails ficaram uma menor parte do tempo com sua build no status sucesso em comparação com outros  projetos com uma menor frequência de modificação, como é caso do projeto mpatric/mp3agic que tem um média mensal de modificação de 0.41 e proporção de builds com status sucesso de 0.9. Assim, com base na Figura não é possível identificar uma correção entre a frequência de atividade mensal e tempo médio com status de build em sucesso nos projetos, devido a varição entre as variáveis. 
+De acordo com a Figura 1, é observado que a maoria do projetos possuem entre 10 a 1000 commits mensais e a maioria dos projetos ficaram com sua build com status sucesso entre 0.75 (75%) a 1.00 (100%) do tempo, mantendo o número de commits de forma constante em relação ao aumento da proporção de tempo com build de status sucesso. Além disso, é possível identificar projetos dispersos entre os extremos, como projetos com mais de 1000 commits e com a proporção do tempo com build sucesso diversificando entre 0.25 (25%) a 1.00 (100%). Em outro extremo, podemos notar a presença de projetos com menos de 10 commits e com a proporção de tempo com build sucesso variando entre 0.00 (0%) a 1.00 (100%).  
 
-Ainda nesse contexto, com o objetivo de verificar se existia diferanças entre projetos Java e Ruby, a Figura abaixo foi produzida.
+Deste modo, por meio dessa análise fica evidentende que não existe uma correlação no que diz respeito ao tamanho do projeto e sua frequência de modificação proposta na pergunta 1, devido a presença de grande variação nessa relação.
+
+Ainda nesse contexto, durante a análise foi optado também por investigar esse contexto sobre a pespectivas de uma separação entre as linguagens de programmação Java e Ruby. Dessa forma, a Figura 2 abaixo foi produzida.
 
 
 ```{r}
 projetos %>% 
     ggplot(aes(x = build_success_prop, y = commits_per_month)) +
-    geom_point(alpha = 0.2,  size = 3, color = 'skyblue') +
-    facet_grid(lang ~ .) +
-    scale_y_log10()
+    geom_point(alpha = 0.2,  size = 3, color = 'dodgerblue4') +
+    geom_smooth(method=lm, se=FALSE, color="red3") +    
+    facet_grid(lang ~ .,) +
+    scale_y_log10()+
+    labs(y= "frequência de modificação", x="proporção de tempo com builds com status sucesso", title="Figura 2 - Relação entre tempo médio com build sucesso e commits mensais nos projetos considerando a linguagem de programação utilizada")
 ```
 
-De forma muito semelhante com a Figura anterior, a Figura apresentada com a divisão dos dados pela linguagem pouco se alterou no que se refere a divisão dos dados. Deste modo, fica evidentente que não existe nenhum impacto da linguagem de programação utilizada no projeto na existência de um correlação entre frequência de modificação e proporção de builds com status de sucesso.
+De forma muito semelhante com a Figura 1, a Figura 2 apresentada com a divisão dos dados pela linguagem pouco se alterou no que se refere a divisão dos dados, possuindo uma grande concentração de commits mensais entre 10 a 1000 em ambas linguagens. Deste modo, fica evidenciado que a linguagem de programação utilizada no projeto não impacta na existência de um correlação entre frequência de modificação e proporção de builds com status de sucesso.
 
-Por fim, para confirmar a não existência de um correlação, tal medida foi calculada resultando em ρ = -0.03547495 o que valida a análisa apresentada.	 
+Por fim, para confirmar a não existência de um correlação, tal medida foi calculada resultando em ρ = -0.03547495, o que valida a análise.	 
 
+### 3. Quantidade de teste e tamanho do projeto
 
-### 2. Quantidade de teste e tamanho do projeto
-
-Assumindo a proporção de teste criados pelos desenvolvedores do projeto como a quantidade de testes para cada mil linhas de código e considerando também o tamanho do projeto como o número de linhas do repositório, é possível verificar se existe alguma relação entre o tamanho do projeto e quantidade de testes produzidos. Assim, a fim de verificar esta relação, a Figura abaixo foi criada.  
-
+Assumindo a desendidade máxima de testes criados pelos desenvolvedores para cada mil linhas de código como a densidade de testes do projeto e o tamanho do projeto como o número máximo de linhas de código, podemos verificar a pergunta 2. Assim, a fim de verificar a relação entre o tamanho do projeto e a densidade testes, a Figura 3 foi criada.  
 
 
 ```{r warning=FALSE}
-projetos %>% 
-  summarise(pearson = cor(sloc_end, tests_per_kloc, method = "pearson"), 
-            spearman = cor(sloc_end, tests_per_kloc, method = "spearman"),
-            kendall = cor(sloc_end, tests_per_kloc, method = "kendall"))
-
 projetos %>% 
     ggplot(aes(x = sloc_end , y =  tests_per_kloc)) + 
-    geom_point(alpha = 0.2,  size = 3, color = 'skyblue') +     scale_y_log10()+ scale_x_log10()
-
+    geom_point(alpha = 0.2,  size = 3, color = 'dodgerblue4') + 
+    geom_smooth(method=lm, se=FALSE, color="red3") +    
+    scale_y_log10()+ scale_x_log10() +
+    labs(y= "Densidade de testes por mil linhas de código", x="tamanho do projeto em linhas de código", title="Figura 3 - Relação entre densidade de testes e tamanho do projeto")
 ```
 
-Com base na Figura, é possível observar uma grande dispersão dos dados, encontrando projetos grandes com pequenas quantidades de testes. No entanto, é possível identificar também alguns projetos mais concentrados e até mesmo uma possível relação que aponta a existência de um decréscimo considerando projetos maiores e um menor o número de teste por mil linhas de código. Apesar disso, pela grande diferenciação dessa combinação, é possível concluir que não existe correlação no que diz respeito ao número de testes e tamanho do projeto.
-
-Do mesmo modo, objetivando investigar a existência de mundanças na relação entre número de testes e tamanho do projeto,foi optado também durante estudo pela separando dos dados, consirando a linguagem de programação utilizada em cada projeto projeto. Baseado nos resultados dessa separação, a Figura abaixo foi desenvolvida.
+Com base na Figura 3, é notada a existência de pequena tendência entre os projetos onde quanto maior o projeto menor sua densidade de testes. No entanto, é perceptível a existência de uma grande dispersão nos projetos, onde é posssível encontrar projetos com densidade de testes abaixo de 1 e com tamano superior a 1e+04. Em outro extremo podemos identificar projetos com tamanho superior a 1e+04 e com densidade de testes superior a 100, apresentando o oposto da tendência. Assim, é possível concluir que não existe correção entre o tamanho do projeto e a sua densidade de testes, logo a pergunta 2 não pode ser confirmada.
 
 
-```{r warning=FALSE}
-projetos %>% 
-    ggplot(aes(x = sloc_end , y = tests_per_kloc)) + 
-    geom_point(alpha = 0.2,  size = 3, color = 'skyblue') +
-    facet_grid(lang ~ .) +
-    scale_y_log10()+ scale_x_log10()
+Por fim, foi calculado a correlação entre essas variáveis, resultado no valor p = 0.01302925, confirmando a inexistencia
+de uma correlação.
 
-```
+
+### 4. Conclusão
+
+Conforme a análise realizada nesse estudo, não foi possível apontar a existência de uma relação entre a proporção de build com status sucesso e a frequência de modificação do projeto. Da mesma forma, não foi verificada a existência de uma relação entre o tamanho do projeto e o número de testes criados. No entanto, é possível elicitar alguns pontos para serem consideração em futuras análises como o domínio de cada projeto, verificando se o projeto trata-se de um sistema web para automação comercial, de um frameworks, uma biblioteca ou etc. Esta separação poderia ser válida para verificar se um certo tipo de domínio tende a ter mais testes do que os demais. Além disso, somente foram considerando builds de projetos do Github, que apresenta projetos open-source que em sua maioria são mantidos pela comunidade, por equipes talvez não tão bem integradas entre si quanto equipes presentes em ambientes corporativos de produção de software. Assim, talvez analisando projetos de empresas de software os ainda projetos de outros repositórios como o Bitbucket os resultados poderiam sofrer alterações. 

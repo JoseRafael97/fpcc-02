@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/377547/5b40065770954e58a7ad536a34e3aa7e
+bundleId: https://api.rpubs.com/api/v1/document/377547/5b40065770954e58a7ad536a34e3aa7e
+url: http://rpubs.com/rafaelfeitosa97/377547
+when: 1523329680.91739
