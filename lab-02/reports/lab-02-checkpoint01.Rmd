@@ -1,0 +1,57 @@
+---
+title: "Lab 2, Checkpoint 1 - Mais variáveis, várias formas"
+output:
+  html_document:
+    df_print: paged
+---
+```{r setup}
+library(tidyverse)
+library(here)
+library(knitr)
+theme_set(theme_bw())
+```
+
+## Lendo os dados
+
+Os dados já processados dos projetos
+
+```{r read}
+projetos = read_csv(here::here("data/projetos.csv"))
+```
+
+#Dataset
+```{r clean, message=FALSE, warning=FALSE}
+projetos = projetos %>% 
+    filter(lang != "javascript")
+```
+lang, 
+
+
+## Visualizando distribuições
+
+1 variável nominal
+
+```{r}
+    projetos %>% 
+    ggplot(aes(x =lang , y = commits_per_month, color = build_success_prop)) + 
+    geom_point(shape= 18,alpha= .4, aes(size = test_density)) + 
+    scale_y_log10()
+  
+    projetos %>% 
+    ggplot(aes(x = test_density, y = build_success_prop, color = lang )) + 
+    geom_point(shape= 18,alpha= .4, aes(size = commits_per_month)) + 
+    scale_x_log10()
+    
+    projetos %>% 
+    ggplot(aes(x = test_density, y = build_success_prop)) + 
+    geom_point(alpha= .4, aes(shape = lang, color = commits_per_month), size = 2.6) + 
+    scale_x_log10()
+      
+
+```
+```{r}
+  
+```
+
+
+
