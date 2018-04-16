@@ -4,53 +4,92 @@ output:
   html_document:
     df_print: paged
 ---
-```{r setup}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(here)
 library(knitr)
 theme_set(theme_bw())
 ```
 
-## Lendo os dados
 
-Os dados já processados dos projetos
+##Dataset
+
+Os dados utilizados na análise foram extraídos por meio Travis Torrent. Neles estão presentes informações sobre builds, commits, casos de testes e etc de diferentes projetos desenvolvidos sob as linguagens de programação Java ou Ruby hospedados no GitHub. 
+
+Com base dos dados do Travis Torrent, foi construído um novo dataset com a sumarização de valores e a criação de novas variáveis, abaixo são apresentadas as variáveis resultantes desse novo dataset.
 
 ```{r read}
 projetos = read_csv(here::here("data/projetos.csv"))
 ```
 
-#Dataset
+Nesse contexto, por meio dos dados, foi investigada a existência de uma ***relação entre número de commits mensais nos projetos e a sua densidade de testes e tempo de build com status sucesso, e ainda se a linguagem de programação utilizada podia influenciar nesse aspecto***.  Para isso, as seguintes variáveis foram utilizadas:
+
+* ***lang:*** principal linguagem de programação utilizada no projeto, variando entre Java, Ruby e Javascript;
+
+* ***build_success_prop:*** sumarizaçao do número total de builds com status sucesso divido pelo número total de builds em cada projeto. Esta variável apresenta valores entre 0 e 1, onde quanto mais perto de 1, mais tempo o projeto ficou com build status sucesso;
+
+* ***commits_per_month:*** número de commits divido pelo número de meses de atividade do projeto, identificado pelo intervalo de tempo em meses do primeiro até último commit realizado no projeto, variando entre as faixas de valores de 1 a 9716;
+
+* ***test_density:*** mediana da densidade de testes do projeto. Esta variável apresenta valores nas faixas entre 0 a 2366.
+
+Para esse estudo foram descartados alguns projetos da linguagem de programação Javascript existentes nos dados, devido a análise concentra-se na integração contínua de testes em projetos Java e Ruby. 
+
 ```{r clean, message=FALSE, warning=FALSE}
 projetos = projetos %>% 
     filter(lang != "javascript")
 ```
-lang, 
 
+## Invetigando a relação entre número de commits mensais e densidade de testes e tempo de build com status sucesso.
 
-## Visualizando distribuições
+Com o objetivo de investigar a relação entre o número de commits mensais com a densidade de testes e tempo médio de build com status sucessos dos projetos, a Figura 1 foi desenvolvida. 
 
-1 variável nominal
+Nesse contexto, a fim de diferenciar os projetos com maior densidade, foi adotado o aspecto de dimensão do ponto, variando entre cinco faixa de valores entre os projetos com maior densidade de testes (2000) a projetos com menor densidade de testes (0). Além disso, foi também aplicado na visualização tonalidades de azul para identificar a proporção de builds com status de sucesso, diversificando em 5 faixas de valores diferentes entre tonalidades mais escuras (0%) a tonalidades mais claras (100%). 
 
 ```{r}
     projetos %>% 
-    ggplot(aes(x =lang , y = commits_per_month, color = build_success_prop)) + 
-    geom_point(shape= 18,alpha= .4, aes(size = test_density)) + 
-    scale_y_log10()
-  
+    ggplot(aes(x =lang , y = commits_per_month,)) + 
+    geom_point(aes(color = build_success_prop, size = test_density)) + 
+    geom_line()+
+    scale_y_log10()+
+    labs(y= "número de commits mensal", x="linguagem", title="Figura 1 - Número de commits e densidade de testes e prop. de builds sucesso")
+```
+
+De acordo com a Figura 1, é possível observar que quanto maior 
+
+Diante do exposto, foi optado pela criação da Figura para tentar identificar melhor ...
+
+```{r}
+
     projetos %>% 
-    ggplot(aes(x = test_density, y = build_success_prop, color = lang )) + 
-    geom_point(shape= 18,alpha= .4, aes(size = commits_per_month)) + 
-    scale_x_log10()
+    ggplot(aes(x = test_density, y = build_success_prop, alpha = commits_per_month )) + 
+    geom_point() + 
+    geom_line() +
+    facet_grid(. ~ lang) +
+    scale_x_log10()+
+    scale_y_log10()
+
     
     projetos %>% 
     ggplot(aes(x = test_density, y = build_success_prop)) + 
-    geom_point(alpha= .4, aes(shape = lang, color = commits_per_month), size = 2.6) + 
+    geom_point(size = 2, aes( shape = lang, alpha = commits_per_month)) + 
     scale_x_log10()
-      
+    
+    projetos %>% 
+    ggplot(aes(x = lang , y = team)) + 
+    geom_line()+
+    geom_point(size = 2, aes( shape = lang, alpha = commits_per_month)) 
+ 
+    projetos %>% 
+    ggplot(aes(x = lang , y = commits_per_month , alpha = test_density, color = build_success_prop)) + 
+    geom_col(position = "dodge") 
+    
+    
+    projetos %>% 
+    ggplot(aes(x = commits_per_month, y = test_density)) + 
+    geom_area()+
+    facet_grid(. ~ lang) +
+    scale_y_log10()
 
-```
-```{r}
-  
 ```
 
 
