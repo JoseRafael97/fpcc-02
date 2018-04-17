@@ -22,7 +22,7 @@ Com base dos dados do Travis Torrent, foi construído um novo dataset com a suma
 projetos = read_csv(here::here("data/projetos.csv"))
 ```
 
-Nesse contexto, por meio dos dados, foi investigada a existência de uma ***relação entre número de commits mensais nos projetos e a sua densidade de testes e tempo de build com status sucesso, e ainda se a linguagem de programação utilizada podia influenciar nesse aspecto***.  Para isso, as seguintes variáveis foram utilizadas:
+Nesse contexto, por meio dos dados, foi investigada a existência de uma ***relação (positiva ou negativa) entre número de commits mensais nos projetos e a sua densidade de testes e tempo de build com status sucesso, e ainda se a linguagem de programação utilizada podia influenciar nesse aspecto***.  Para isso, as seguintes variáveis foram utilizadas:
 
 * ***lang:*** principal linguagem de programação utilizada no projeto, variando entre Java, Ruby e Javascript;
 
@@ -39,7 +39,7 @@ projetos = projetos %>%
     filter(lang != "javascript")
 ```
 
-## Invetigando a relação entre número de commits mensais e densidade de testes e tempo de build com status sucesso.
+## Investigando a relação entre número de commits mensais e densidade de testes e tempo de build com status sucesso.
 
 Com o objetivo de investigar a relação entre o número de commits mensais com a densidade de testes e tempo médio de build com status sucessos dos projetos, a Figura 1 foi desenvolvida. 
 
@@ -49,7 +49,6 @@ Nesse contexto, a fim de diferenciar o número de commits mensal, foi adotado o 
     projetos %>% 
     ggplot(aes(x =lang , y = test_density,)) + 
     geom_point(aes(color = build_success_prop, size = commits_per_month)) + 
-    geom_line()+
     scale_y_log10()+
     labs(y= "densidade de testes", x="linguagem", title="Figura 1 - Número de commits e densidade de testes/prop. de builds sucesso (1)")
 ```
@@ -58,45 +57,81 @@ De acordo com a Figura 1, é possível observar que a maioria dos projetos apres
 
 Considerando a investigação proposta nesse estudo, é notável que alguns projetos possuem grande densidade de teste, ficando entre 5000 e 7500 commits mensais. Além, disso, levando em conta somente projetos com a linguagem Ruby, existem projetos com commits mensais acima de 100 e com densidade de teste de 7500. No entanto, ainda assim, é identificado na visualização uma grande variação (dispersão) neste aspecto, onde é apresentado projetos com densidade de testes entre 0 e 1 e comnpumero de commits entre 1 a 2500. Este número de commits pode também ser encontrado em projetos com grandes densidade de testes (acima de 100). Assim, somente por meio dessa visualização não é possível apontar uma relação entre as características observadas.
 
-Diante do exposto, foi optado pela criação da Figura 2 para tentar confirmar ou refutar a existência dessa relação.
+Diante do exposto, foi optado pela criação da Figura 2 para tentar confirmar ou refutar a existência dessa relação. Nela é mostrada em outra pespectiva a relação entre proporção de builds sucesso e a densidade de testes e também número de commits mensais dos projetos com auxilio do uso de brilho nos pontos, considerando tonalidades mais escuras para os projetos com maior número de commits mensais (7500).
 
 ```{r warning=FALSE}
     projetos %>% 
     ggplot(aes(x = test_density, y = build_success_prop, alpha = commits_per_month )) + 
     geom_point() + 
-    geom_line() +
     facet_grid(. ~ lang) +
     scale_x_log10()+
-    scale_y_log10() + 
-    labs(y= "proporção de builds sucesso", x="densidade de testes", title="Figura 2 - Número de commits e densidade de testes/prop. de builds sucesso (2)")
+    labs(y= "proporção de builds sucesso", x="densidade de testes", title="Figura 2 - Número de commits e densidade de testes/prop. de builds sucesso(2)")
 ```
 
-```{r}
+Com base na Figura 2, é possível identificar um número maior de projetos com alta densidade de testes (estando entre as faixas de 50 e 100) e maior proporção de builds sucesso entre os valores de 0.75 (75%) e 1 (100%) e ainda maiores quantidades de commits mensais, ficando mais evidente nesse aspecto projetos de linguagem Ruby. No entanto, no que diz respeito a proporção de builds com status sucesso e número de commits mensais, é observável também existência de projetos com proporção entre 0.75 e 1, mas com número de commits mensais entre 0 e 1, o que invalida por meio dessa visualização qualquer possibilidade de estabelecimento de uma relação entre elas. Já considerando a relação entre número de commits mensal e densidade de testes, é notável uma pequena tendência, onde alguns projetos com maior número de commits possuem maior densidade de testes em ambas linguagens. Contudo, esta relação por meio da visualização mostra-se fraca, não sendo possível confirmá-la.
 
+A fim de identificar de forma mais clara a relação entre densidade de testes e número de commits mensal e também confirmar a não existência da relação de número de commits mensal e proporção de builds com status sucesso, a Figura 3 foi produzida.
 
-    
+```{r warning=FALSE}
     projetos %>% 
-    ggplot(aes(x = test_density, y = build_success_prop)) + 
-    geom_point(size = 2, aes( shape = lang, alpha = commits_per_month)) + 
-    scale_x_log10()
+    ggplot(aes(x = test_density, y = commits_per_month, color = lang)) + 
+    geom_point(shape = 1, alpha = 0.4 ,aes( size = build_success_prop)) + 
+    geom_smooth(method=lm, se=TRUE, color="red3") +  
+    facet_grid(. ~ lang) +
+    scale_x_log10()+
+    scale_y_log10()+
+    labs(y= "densidade de testes", x="commits mensal", title="Figura 3 - Número de commits e densidade de testes/prop. de builds sucesso(3)")
+```
+
+De acordo com a Figura 3, parece existir uma tendência entre número de commits mensal e densidade de testes no que diz respeito projetos Java, onde quanto maior o número de projetos menor a densidade de testes. Já considerando projetos Ruby, esta relação parece ser positiva, onde projetos com maior número de commits mensais possui maior densidades de testes. No entanto, ambas tendências são fracas (existência de uma grande dispersão). Assim, tais tendências não foram consideradas válidas para este análise.
+
+Ainda nesse contexto, com o objetivo de observar as características investigadas em diferentes perspectivas, a Figura 5 foi produzida.
+  
+```{r warning=FALSE}
+  projetos %>%
+  ggplot(aes(x = test_density, y = build_success_prop)) + 
+  geom_point(size = 2, aes( shape = lang, alpha = commits_per_month)) + 
+  scale_x_log10()+
+  labs(y= "proporção de builds sucesso", x="commits mensal", title="Figura 4 - Número de commits e densidade de testes/prop. de builds sucesso (4)")
     
+```
+
+A figura 4, apresenta uma visualização que utiliza-se do brilho e formas geométricas para representar o número de commits mensal e a linguagem de programação utilizada nos projetos. Por meio dela, é perceptível uma maior concentração dos dados entre proporção de builds com status sucesso entre 0.75 e 1 e commits mensais entre 50 a 100. Neste contexto, é observado poucos possuem alto número de commits mensais (7500) e alta proporção de builds sucesso. Além disso, existem projetos com número de commits mensais entre 7500 e proporção de build sucesso abaixo de 0.50 (50%), o que invalida ainda mais a existência de uma relação entre proporção de builds sucesso e o número de commits mensais. Já considerando a relação entre densidade de testes e número de commits mensais, assim como as demais Figuras, é possível notar uma fraca relação, mas que não válida considerando os projetos e suas dispersões.
+
+Diante das Figuras produzidas, surgiu a necessidade investigadas as relações propostas nessa pesquisa por meio de outros tipo de visualizações. Assim, a Figura 5 e 6 são apresentadas. 
+  
+```{r warning=FALSE}
     projetos %>% 
-    ggplot(aes(x = lang , y = team)) + 
+    ggplot(aes(x = build_success_prop  , y = test_density , alpha = commits_per_month)) + 
     geom_line()+
-    geom_point(size = 2, aes( shape = lang, alpha = commits_per_month)) 
- 
+    facet_grid(. ~ lang) +
+    geom_point() + 
+    scale_x_log10()+
+    scale_y_log10()+
+    labs(y= "densidade de testes", x="proporção de builds com status sucesso", title="Figura 5 - Número de commits e densidade de testes/prop. de builds sucesso(5)")
+
+```
+
+A Figura 5 apresenta a relação entre proporção de builds com status sucesso e densidade de testes. Para identificar os projetos com maior número de commits mensal, foi utilizado pontos com linhas com diferentes tons de preto, onde quanto mais escuro o ponto e linha for mais commits mensal o projeto possui. 
+
+Com base na figura, é possível observar que projetos maior proporção de build sucesso possuem mais commits mensais. No entanto, isto não invalidado em todas as demais visualizações, o que pode significar que esta visualização não é adequada para verificação dessa relação. Em outro contexto, também não possível de forma clara identificar se projetos com maior número de commits mensal possuem maior densidade de teste, devido a uma sobreposição entre pontos e linhas na visualização. Assim, nenhuma das relações foram encontradas ou ainda validadas.
+
+
+```{r warning=FALSE}
     projetos %>% 
-    ggplot(aes(x = lang , y = commits_per_month , alpha = test_density, color = build_success_prop)) + 
-    geom_col(position = "dodge") 
-    
-    
-    projetos %>% 
-    ggplot(aes(x = commits_per_month, y = test_density)) + 
+    ggplot(aes(x = commits_per_month, y = test_density, build_success_prop)) + 
     geom_area()+
     facet_grid(. ~ lang) +
-    scale_y_log10()
-
+    scale_x_log10()+
+    scale_y_log10()+
+    labs(y= "densidade de testes", x="commits mensal", title="Figura 6 - Número de commits e densidade de testes/prop. de builds sucesso(6)")
 ```
 
+Por meio da Figura 6, é possível verificar que os projetos de ambas linguagens possuem variações na densidade de testes entre 0 a 1000. Além disso, projetos Ruby parecem ter maior densidade de testes quando relacionado esse aspecto com número de commits mensais. Já projetos Java possuem maior constância nesse aspecto.
 
 
+##Avaliação das visualizações
+
+Com base na análise realizada durante este trabalho, não foi possível identificar uma relação válida entre número de commits mensal e densidade de testes e/ou proporção de builds sucesso. Além disso, as linguagens de programação utilizadas nos projetos parece não interferir nesses resultados.
+
+No que diz respeito a eficácia das visualizações apresentas durante esta análise, a que apresentou uma visualização mais clara para a identificação da existência de relações entre número de commits mensal e densidade de testes e/ou proporção de builds com status sucesso foi a Figura 1, onde por meio de tons de cores e uso de diferentes dimensões para os pontos é possível verificar os projetos com maiores e menores proporções de builds sucesso e os projetos com maior e menor número de commits. Desta forma, é possível apontar os projetos com maior densidade de testes, maior proporção de builds sucesso, maior número de commits mensal e ainda se existe diferenças nos dados para as diferentes linguagens estudadas. Assim, a investigação pode ser respondida de forma simples e clara. Em contrapartida, as visualizações apresentadas nas Figuras 5 e 6, parecem serem as menos indicadas para verificação da relação proposta.
