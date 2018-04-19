@@ -1,0 +1,14 @@
+---
+title: "Lab 2, Checkpoint 2 - Uma visualização para publicação"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(knitr)
+theme_set(theme_bw())
+```
+
