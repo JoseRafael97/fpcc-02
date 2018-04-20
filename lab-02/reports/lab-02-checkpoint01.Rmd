@@ -1,9 +1,12 @@
 ---
 title: "Lab 2, Checkpoint 1 - Mais variáveis, várias formas"
-output:
-  html_document:
-    df_print: paged
+output: 
+  pdf_document:
+    pandoc_args: [
+      "-V", "classoption=twocolumn"
+    ]
 ---
+
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(here)
