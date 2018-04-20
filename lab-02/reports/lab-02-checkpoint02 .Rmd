@@ -30,7 +30,7 @@ projetos = projetos %>%
     filter(lang != "javascript")
 ```
 ### 1. Introdução
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempus condimentum massa ut posuere. Curabitur eget maximus metus, in tincidunt odio. Fusce eleifend mauris sit amet neque finibus, non ornare lorem laoreet. Mauris ultrices sollicitudin enim, dapibus tempor ipsum sollicitudin at. Fusce pulvinar eros in felis eleifend, quis vulputate purus luctus. Sed sed ultricies leo, id scelerisque enim. Etiam iaculis purus augue, ac lacinia felis tempor vitae. Aliquam tellus arcu, suscipit nec accumsan quis, venenatis vitae ex. 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempus condimentum massa ut posuere. Curabitur eget maximus metus, in tincidunt odio. Fusce eleifend mauris sit amet neque finibus, non ornare lorem laoreet. Mauris ultrices sollicitudin enim, dapibus tempor ipsum sollicitudin at. Fusce pulvinar eros in felis eleifend, quis vulputate purus luctus.
 
 ### 2. Dataset
 Os dados utilizados na análise foram extraídos por meio Travis Torrent. Neles estão presentes informações sobre builds, commits, casos de testes e etc de diferentes projetos desenvolvidos sob as linguagens de programação Java ou Ruby hospedados no GitHub. Com base nos dados, foi investigada a seguinte pergunta:
