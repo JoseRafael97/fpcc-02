@@ -1,0 +1,101 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
+
+#1
+
+
+set.seed(1234)
+
+grupo1 = tibble(participante = 1:10000, 
+                grupo = "a",
+                tempo_no_site = 100 * rweibull(10000, 1, 1))
+
+grupo2 = tibble(participante = 1:10000, 
+                grupo = "b",
+                tempo_no_site = 100 * rweibull(10000, 1, 1.3))
+
+populacao2 = bind_rows(grupo1, grupo2)
+
+glimpse(populacao2)
+
+populacao2 %>% 
+  ggplot(aes(x = tempo_no_site, color = grupo)) + 
+  geom_density()
+
+populacao2 %>% 
+  group_by(grupo) %>% 
+  summarise_all(funs(mean, median))
+
+
+
+#2
+
+set.seed(123)
+
+grupo1 = tibble(participante = 1:10000, 
+                grupo = "a",
+                tempo_no_site = 100 * rweibull(10000, 1, 1))
+
+grupo2 = tibble(participante = 1:10000, 
+                grupo = "b",
+                tempo_no_site = 100 * rweibull(10000, 1, 1))
+
+populacao2 = bind_rows(grupo1, grupo2)
+
+glimpse(populacao2)
+
+populacao2 %>% 
+  ggplot(aes(x = tempo_no_site, color = grupo)) + 
+  geom_density()
+
+populacao2 %>% 
+  group_by(grupo) %>% 
+  summarise_all(funs(mean, median))
+  
+  
+amostra_2grupos = sample_n(populacao2, 200)
+
+amostra_2grupos %>% 
+  group_by(grupo) %>% 
+  summarise_all(funs(mean, median))
+
+#há diferenças sim
+
+funcao_bootstrap <- function(dado, indices){
+    d = dado %>% 
+      slice(indices) %>% 
+      group_by(grupo) %>% 
+      summarise(media_grupo = mean(tempo_no_site)) %>% 
+      pull(media_grupo)
+    
+    return(d[1] - d[2])
+}
+
+bootstraps <- boot(data = amostra_2grupos, 
+                   statistic = funcao_bootstrap, # <- referência para a função 
+                   R = 2000) # número de bootstraps
+
+glimpse(bootstraps$t)
+
+boot.ci(bootstraps, conf = 0.95, type = "basic")
+
+
+#Por estranho que pareça o intervalo mostrado não é significativo.
