@@ -99,7 +99,7 @@ diferencas %>%
 
 Com essa informação, podemos (pedir à biblioteca para) calcular o intervalo de confiança para a média:
 
-```{r funcao-boot, exercise = FALSE, echo = TRUE}
+```{r  exercise = FALSE, echo = TRUE}
 boot.ci(bootstraps, conf = 0.95, type = "basic")
 ```
 
@@ -140,7 +140,7 @@ boot.ci(bootstraps, conf = 0.95, type = "basic")
 ```
 
 
-```{r funcao-boot, exercise = FALSE, echo = TRUE}
+```{r exercise = FALSE, echo = TRUE}
 diferencas %>% 
   ggplot(aes(x = dif)) + 
   geom_histogram(binwidth = 2, fill = "white", color = "pink") + 

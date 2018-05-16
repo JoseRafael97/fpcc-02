@@ -127,9 +127,39 @@ diferencas %&gt;%
 <h3>Agora você</h3>
 <p>Baseado no código acima, calcule o <strong>IC da mediana</strong> dessa mesma variável. Use a mesma variável amostra.</p>
 <div class="tutorial-exercise" data-label="faca-mediana1" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="10">
+<pre class="text"><code># sim inclui poderia não ter incluído, no entanto com média 95% ela está dentro, logo esse comportamento era esperado
+
+funcao_bootstrap &lt;- function(dado, indices){
+    d = dado %&gt;% 
+        slice(indices) %&gt;% # slice(x, c(1, 4, 5)) retorna um vetor com os elementos nos índices 1, 4 e 5 de x
+        pull(tempo_no_site)         # tempo_no_site é o nome da variável que nos interessa
+    return(median(d))
+}
+
+bootstraps &lt;- boot(data = uma_amostra, 
+                   statistic = funcao_bootstrap, # &lt;- referência para a função 
+                   R = 2000) # número de bootstraps
+
+glimpse(bootstraps$t)
+
+tibble(estatistica = as.double(bootstraps$t)) %&gt;% 
+  ggplot(aes(x = estatistica)) + 
+  geom_histogram(binwidth = 2, fill = &quot;white&quot;, color = &quot;pink&quot;)
+
+diferencas = tibble(dif = as.double(bootstraps$t) - median(uma_amostra$tempo_no_site))
+
+
+  
+  
+boot.ci(bootstraps, conf = 0.95, type = &quot;basic&quot;)</code></pre>
 <script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
 </div>
-<p>Podemos afirmar se valor da média é superior ou inferior ao da mediana (na população)? Isso era esperado?</p>
+<pre class="r"><code>diferencas %&gt;% 
+  ggplot(aes(x = dif)) + 
+  geom_histogram(binwidth = 2, fill = &quot;white&quot;, color = &quot;pink&quot;) + 
+  geom_vline(xintercept = quantile(diferencas$dif, 0.025)[[1]]) + 
+  geom_vline(xintercept = quantile(diferencas$dif, 0.975)[[1]])</code></pre>
+<p><img src="e1-ics1_files/figure-html/unnamed-chunk-3-1.png" width="624" /></p>
 </div>
 </div>
 <div id="section-ic-das-diferencas-sintetico" class="section level2">

@@ -1,0 +1,74 @@
+---
+title: "Lab03-CP 1-Inferência via ICs"
+output: html_document
+---
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(scales)
+library(here)
+library(knitr)
+library("lubridate")
+theme_set(theme_bw())
+```
+
+```{r read}
+buscas = read_csv(here::here("data/search_data.csv"))
+```
+
+A maioria dos usuários do grupo b não clicaram em nenhum resultado? confirma isso!
+
+```{r}
+buscas %>% 
+    glimpse()
+
+buscas %>%
+    group_by(grupo = group) %>% 
+    summarise(quantidade_sessao = n())
+
+buscas %>%
+    ggplot(aes(x = num_clicks)) + 
+    geom_histogram(binwidth = 1, fill = "orange")+
+    facet_grid(group ~ .)  + scale_y_log10()
+
+
+sessions = buscas %>%
+    group_by(data = as.Date(session_start_date), group) %>% 
+    summarise(taxa_cliques = sum(num_clicks > 0)/n()) 
+
+sessions %>% 
+    glimpse()
+
+sessions %>% 
+    ggplot(aes(x = taxa_cliques)) + 
+    geom_histogram(binwidth = 0.01, fill = "cyan")+
+    facet_grid(group ~ .)
+
+buscas %>%
+    filter(!is.na(position_clicked)) %>%
+    ggplot(aes(x = position_clicked)) + 
+    geom_histogram(binwidth = 100, fill = "darkgreen")+
+    facet_grid(group ~ .) + scale_y_log10()
+
+
+sessions = buscas %>%
+        group_by(data = as.Date(session_start_date), group) %>% 
+        summarise(position_cliked_median =  median(na.omit(position_clicked)))
+
+sessions %>% 
+    glimpse()
+
+
+sessions %>% 
+    ggplot(aes(x = position_cliked_median)) + 
+    geom_histogram(binwidth = 0.1, fill = "darkblue")+
+    facet_grid(group ~ .)
+
+ buscas %>%
+        filter(search_index > 0) %>%
+        filter(!is.na(results)) %>%
+        ggplot(aes(x =results)) + 
+        geom_histogram(binwidth = 1, fill = "darkred") +
+        facet_grid(group ~ .)  + scale_y_log10()
+```

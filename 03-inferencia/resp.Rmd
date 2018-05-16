@@ -99,3 +99,30 @@ boot.ci(bootstraps, conf = 0.95, type = "basic")
 
 
 #Por estranho que pareça o intervalo mostrado não é significativo.
+
+
+
+#3
+
+funcao_bootstrap <- function(dado, indices){
+    d = dado %>% 
+        slice(indices) %>% # slice(x, c(1, 4, 5)) retorna um vetor com os elementos nos índices 1, 4 e 5 de x
+        pull(news)         # news é o nome da variável que nos interessa
+    return(median(d))
+}
+
+bootstraps <- boot(data = amostra, 
+                   statistic = funcao_bootstrap, # <- referência para a função 
+                   R = 2000) # número de bootstraps
+
+glimpse(bootstraps$t)
+
+tibble(estatistica = as.double(bootstraps$t)) %>% 
+    ggplot(aes(x = estatistica)) + 
+    geom_histogram(binwidth = .1, fill = "white", color = "darkred")
+    
+boot.ci(bootstraps, conf = 0.95, type = "basic")
+
+# O valor da mediana é inferior ao da média
+
+#Confimar isso.
