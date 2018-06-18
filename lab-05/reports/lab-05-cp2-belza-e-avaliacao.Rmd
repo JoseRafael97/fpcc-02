@@ -1,0 +1,43 @@
+---
+title: "lab05_CP 2:_Beleza_e_avaliação"
+output: html_document
+---
+
+```{r warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(broom)
+library(modelr)
+source(here::here("code/lib.R"))
+theme_set(theme_report())
+
+knitr::opts_chunk$set(tidy = FALSE,
+                      fig.width = 6,
+                      fig.height = 5)
+
+paleta = c("#404E4D",
+           "#92DCE5",
+           "#938BA1",
+           "#2D3142",
+           "#F4743B")
+```
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
