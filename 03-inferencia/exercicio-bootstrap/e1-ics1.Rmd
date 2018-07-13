@@ -12,7 +12,6 @@ library(boot) # <-- Para bootstrap
 
 knitr::opts_chunk$set(echo = FALSE)
 theme_set(theme_bw())
-
 amostra = read_csv(here("exercicio-bootstrap/sample-lastfm.csv"), col_types = "cddii") 
 dados = amostra
 ``` 

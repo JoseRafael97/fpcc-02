@@ -3,72 +3,71 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 library(tidyverse)
-library(broom)
-library(modelr)
+library(scales)
+library(here)
+library(knitr)
+library(boot)
+library("lubridate")
+theme_set(theme_bw())
 ```
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 dataset1 = read_csv(here::here("/data/dataset01-yamada.csv"))
-
-dataset_default = read_csv(here::here("/data/original.csv"))
-
 ```
 
 
 ```{r}
 
+dataset1 = dataset1 %>% 
+    group_by(page) %>% 
+    mutate(fp = wrong, 
+           tp = extracted - wrong,
+           fn = expected - tp,
+           recall = tp/(tp + fn),
+           precision = tp/(tp + fp),
+           f_score = if (recall > 0 && precision > 0) { (2*recall*precision)/(recall+precision) }else { 0.0}) %>% ungroup()
 
-sum(dataset1$expected)
-sum((dataset1 %>% filter(`content detected` == 'true' & problem != 'record alignment – unusable'))$extracted, na.rm=TRUE)
-
-
-valor_esperado = sum(dataset_default$expected)
-
-valor_total = sum(dataset_default$wrong, na.rm=TRUE) + sum((dataset_default%>% filter(`content detected` == 'true'))$extracted)
-
-relevante = sum((dataset_default%>% filter(`content detected` == 'true' & problem != 'record alignment – unusable'))$extracted)
-
-relevante/valor_esperado
-relevante/valor_total
-sum((dataset_default %>% filter(`content detected` == 'true' ))$extracted)
-
-o recall ai seria 50/50+0 = 1
-
-sum(dataset1$expected, na.rm=TRUE)
-valor_esperado = sum(dataset1$expected)
-valor_total = sum(dataset1$wrong, na.rm=TRUE) + sum((dataset_default%>% filter(`content detected` == 'true'))$extracted, na.rm=TRUE)
-relevante = sum((dataset1%>% filter(`content detected` == 'true'))$extracted, na.rm=TRUE)
-
-recall = relevante/valor_esperado
-precision = relevante/valor_total
-
+dataset1$precision[is.na(dataset1$precision)] <- 0
+dataset1$recall[is.na(dataset1$recall)] <- 0
+recall = mean(dataset1$recall, na.rm=TRUE)
 recall
 
+precision = mean(dataset1$precision, na.rm=TRUE)
+precision
+
 f_score = (2*recall*precision)/(recall+precision)
-
-
-dataset1 
-
-dataset1 %>% 
-  ggplot(aes(x = extracted)) + 
-  geom_histogram(bins = 50, fill = 'darkgreen') +
-  labs(title="Figura 1 - Distribuição dos escores dos professores") 
+f_score 
 
 ```
-
-
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
 ```{r}
-plot(cars)
+set.seed(1234)
+
+uma_amostra = sample_n(dataset1, 51)
+
+uma_amostra
+a <- dataset1 %>% select(precision, recall)
+# a = sample_n(a, 100, replace = TRUE )
+funcao_bootstrap <- function(dado, indices){
+    print(dado)
+    a <- mean(dado$precision[indices])
+    b <- mean(dado$recall[indices])
+    c(a,b)
+}
+
+# funcao_bootstrap <- function(x, i){
+#     print(x)
+#     mean(x[i])
+# }
+
+bootstraps <- boot(data = dataset1, 
+                   statistic = funcao_bootstrap, # <- referência para a função 
+                   R = 2000) # número de bootstraps
+glimpse(bootstraps$t)
+
+boot.ci(bootstraps, conf = 0.95, type = "basic")
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

@@ -1,52 +1,52 @@
-page,extracted,wrong,expected,content detected,problem,recall,precision
-1,20,,20,true,none,100.00%,100.00%
-2,10,,10,true,none,100.00%,100.00%
-3,20,,20,true,none,100.00%,100.00%
-4,25,,25,true,none,100.00%,100.00%
-5,0,24,24,false,record alignment,0.00%,0.00%
-6,0,5,5,false,record alignment,0.00%,0.00%
-7,10,,10,true,none,100.00%,100.00%
-8,10,,10,true,none,100.00%,100.00%
-9,10,20,10,true,record alignment – unusable,100.00%,33.33%
-10,74,,74,true,none,100.00%,100.00%
-11,10,,10,true,none,100.00%,100.00%
-12,10,,10,true,none,100.00%,100.00%
-13,16,,16,true,none,100.00%,100.00%
-14,10,,10,true,none,100.00%,100.00%
-15,0,7,12,false,content detection,0.00%,0.00%
-16,16,1,15,true,content detection ,100.00%,94.12%
-17,160,,160,true,none,100.00%,100.00%
-18,8,,8,true,none,100.00%,100.00%
-19,50,,50,true,none,100.00%,100.00%
-20,10,1,10,true,record alignment,100.00%,90.91%
-21,100,2,100,false,content detection,100.00%,98.04%
-22,10,,10,true,none,100.00%,100.00%
-23,10,,10,true,none,100.00%,100.00%
-24,10,,10,true,none,100.00%,100.00%
-25,25,,25,true,none,100.00%,100.00%
-26,10,,10,true,none,100.00%,100.00%
-27,11,11,20,true,none,100.00%,50.00%
-28,10,,10,true,none,100.00%,100.00%
-29,94,,94,false,none,100.00%,100.00%
-30,10,,10,true,none,100.00%,100.00%
-31,10,,10,true,none,100.00%,100.00%
-32,5,,5,true,none,100.00%,100.00%
-33,10,,10,true,none,100.00%,100.00%
-34,10,,10,true,none,100.00%,100.00%
-35,10,,10,true,none,100.00%,100.00%
-36,10,,10,true,none,100.00%,100.00%
-37,25,,25,true,none,100.00%,100.00%
-38,0,0,10,false,content detection,0.00%,0.00%
-39,6,,6,true,none,100.00%,100.00%
-40,,5,10,true,content detection,60.00%,54.55%
-41,20,,20,true,none,100.00%,100.00%
-42,0,0,10,true,none,0.00%,0.00%
-43,0,0,25,true,none,0.00%,0.00%
-44,15,5,15,true,content detection,100.00%,75.00%
-45,10,,10,true,none,100.00%,100.00%
-46,15,1,15,true,none,100.00%,93.75%
-47,10,,10,true,none,100.00%,100.00%
-48,10,,10,true,none,100.00%,100.00%
-49,,15,13,true,record alignment,0.00%,0.00%
-50,10,,10,true,none,100.00%,100.00%
-51,5,,10,true,record alignment – unusable,50.00%,100.00%
+page,extracted,wrong,expected,content detected,problem
+1,20,0,20,true,none
+2,10,0,10,true,none
+3,20,0,20,true,none
+4,25,0,25,true,none
+5,24,24,24,false,record alignment
+6,5,5,5,false,record alignment
+7,10,0,10,true,none
+8,10,0,10,true,none
+9,10,0,10,true,none
+10,74,0,74,true,none
+11,10,0,10,true,none
+12,10,0,10,true,none
+13,16,0,16,true,none
+14,10,0,10,true,none
+15,7,7,12,false,content detection
+16,16,1,15,true,content detection 
+17,160,0,160,true,none
+18,8,0,8,true,none
+19,50,0,50,true,none
+20,10,1,10,true,record alignment
+21,100,2,100,false,content detection
+22,10,0,10,true,none
+23,10,0,10,true,none
+24,10,0,10,true,none
+25,25,0,25,true,none
+26,10,0,10,true,none
+27,11,11,20,true,none
+28,10,0,10,true,none
+29,94,0,94,false,none
+30,10,0,10,true,none
+31,10,0,10,true,none
+32,5,0,5,true,none
+33,10,0,10,true,none
+34,10,0,10,true,none
+35,10,0,10,true,none
+36,10,0,10,true,none
+37,25,0,25,true,none
+38,0,0,10,false,content detection
+39,6,0,6,true,none
+40,5,5,10,true,content detection
+41,20,0,20,true,none
+42,0,0,10,true,none
+43,0,0,25,true,none
+44,15,5,15,true,content detection
+45,10,0,10,true,none
+46,15,1,15,true,none
+47,10,0,10,true,none
+48,10,0,10,true,none
+49,15,15,13,true,record alignment
+50,10,0,10,true,none
+51,5,0,10,true,record alignment – unusable
