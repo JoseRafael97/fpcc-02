@@ -148,7 +148,7 @@ avaliacao_professores %>%
   labs(title="Figura 6 - Relação entre Score e Beleza média dos professores", x = "beleza média")
 ```
 
-Analisando a Figura 6, é idetificável a exisência de um pequeno aumento no score quando a média da beleza dos professores aumenta. Para verificar com mais detalhes esta relação, foi utilizada regressõa simples e abaixo são apresentados os resultados obtidos com esta técnica.  
+Analisando a Figura 6, é identificável a existência de um pequeno aumento no score quando a média da beleza dos professores aumenta. Para verificar com mais detalhes esta relação, foi utilizada regressão simples e abaixo são apresentados os resultados obtidos por meio do uso da técnica.  
 
 ```{r}
 tidy(modelo1, conf.int = TRUE, conf.level = 0.95)
@@ -213,4 +213,4 @@ Como é possível, observar acima os valores pouco se alteraram e novo modelo co
 
 Nesse relatório, foi apresentado análise da relação da beleza (bty_avg) na variância do score dos professores. Os resultaram apontam que a média da beleza para modelo utilizado têm pouca influência na variável score, conseguindo explicar apensas cerca de 3% dessa variação. Dessa forma, partindo do pressuposto que existiam outros aspectos que eram mais relavantes para explicar o score dos professores, foi optado por investigar o impacto de variáveis do âmbito acadêmico como número de alunos da turma do professor e também variáveis mais gerais como sexo e idade dos professores. Por fim, foi construído um modelo de regressão multivariada que apresentou um explicação  de 9% da variância do score dos professores.
 
-Com base nesses, resultados é possível concluir que apesar da beleza conseguir explicar 3% da variável score (hipótese confirmada), outras apresentaram um imapcto maior nesse aspecto. Assim, de acordo com os resultados devem existir aspectos que apresentam maior impacto no score do professor do quê sua beleza. 
+Com base nesses, resultados é possível concluir que apesar da beleza conseguir explicar 3% da variável score (hipótese confirmada), outras variáveis apresentaram um impacto maior nesse aspecto. Assim, de acordo com os resultados devem existir aspectos que apresentam maior relevância na variância do score do professor em comparação com sua beleza. 

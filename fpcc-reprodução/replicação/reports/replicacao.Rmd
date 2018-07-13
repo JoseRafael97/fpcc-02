@@ -1,0 +1,74 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(broom)
+library(modelr)
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+dataset1 = read_csv(here::here("/data/dataset01-yamada.csv"))
+
+dataset_default = read_csv(here::here("/data/original.csv"))
+
+```
+
+
+```{r}
+
+
+sum(dataset1$expected)
+sum((dataset1 %>% filter(`content detected` == 'true' & problem != 'record alignment – unusable'))$extracted, na.rm=TRUE)
+
+
+valor_esperado = sum(dataset_default$expected)
+
+valor_total = sum(dataset_default$wrong, na.rm=TRUE) + sum((dataset_default%>% filter(`content detected` == 'true'))$extracted)
+
+relevante = sum((dataset_default%>% filter(`content detected` == 'true' & problem != 'record alignment – unusable'))$extracted)
+
+relevante/valor_esperado
+relevante/valor_total
+sum((dataset_default %>% filter(`content detected` == 'true' ))$extracted)
+
+o recall ai seria 50/50+0 = 1
+
+sum(dataset1$expected, na.rm=TRUE)
+valor_esperado = sum(dataset1$expected)
+valor_total = sum(dataset1$wrong, na.rm=TRUE) + sum((dataset_default%>% filter(`content detected` == 'true'))$extracted, na.rm=TRUE)
+relevante = sum((dataset1%>% filter(`content detected` == 'true'))$extracted, na.rm=TRUE)
+
+recall = relevante/valor_esperado
+precision = relevante/valor_total
+
+recall
+
+f_score = (2*recall*precision)/(recall+precision)
+
+
+dataset1 
+
+dataset1 %>% 
+  ggplot(aes(x = extracted)) + 
+  geom_histogram(bins = 50, fill = 'darkgreen') +
+  labs(title="Figura 1 - Distribuição dos escores dos professores") 
+
+```
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
